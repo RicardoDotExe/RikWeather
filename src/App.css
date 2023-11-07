@@ -1,3 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.card{
+  max-width: 40em;
+  padding: 4rem;
+  background-color: whitesmoke;
+}
+
+.name {
+  text-align: left;
+  align-items: flex-start; /* Alinea los elementos .name a la izquierda */
+}
+
+.datos {
+  text-align: right;
+  align-self: flex-end; /* Alinea los elementos .datos a la derecha */
+}
+
+/*------------------------------
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -33,10 +54,8 @@
   }
 }
 
-.card {
-  padding: 2em;
-}
 
 .read-the-docs {
   color: #888;
 }
+*/

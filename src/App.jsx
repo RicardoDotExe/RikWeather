@@ -3,7 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import WeatherAPI from "./api/weather";
 import IPLocationAPI from "./api/ip_location";
 
-const IP_DEFAULT = "79.116.62.157";
+import SunIcon from "./assets/sun_icon.svg"
+
+const IP_DEFAULT = "101.44.211.124";
 
 function App() {
   const intlEs = new Intl.DisplayNames(["es-ES"], { type: "region" });
@@ -25,7 +27,7 @@ function App() {
     const [lon, lan] = ipData.loc.split(",");
     const data = await WeatherAPI.getCurrentWeather(lon, lan);
     const json = await data.json();
-    setTimeout(() => setWeatherData(json), 2000);
+    setWeatherData(json);
   }, [ipData]);
 
   useEffect(() => {
@@ -43,7 +45,7 @@ function App() {
     <div className="flex items-center justify-center w-screen h-screen overflow-x-hidden overflow-y-auto bg-white">
       {!weatherData ? (
         <svg
-          className="animate-spin h-12 w-12 text-blue-500"
+          className="animate-spin h-24 w-24 text-blue-500"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -71,8 +73,8 @@ function App() {
             </p>
           </div>
           <div className="flex flex-col gap-8 min-w-[260px] p-12 rounded-2xl bg-[#F9F9F9]">
-            <div className="flex flex-row items-center">
-              <img src="media/Sol.png" alt="Hace Sol"></img>
+            <div className="flex flex-nowrap items-center">
+              <img src={SunIcon} className="w-24 h-24" alt="Hace Sol"></img>
               <p className="ml-4 text-5xl font-bold text-[#4B4B4B]">
                 {weatherData.current.temperature_2m}{" "}
                 {weatherData.current_units.temperature_2m[0]}

@@ -1,77 +1,102 @@
-import './App.css';
-import { useState, useEffect } from "react";
+import "./App.css";
+import { useState, useEffect, useCallback } from "react";
+import WeatherAPI from "./api/weather";
+import IPLocationAPI from "./api/ip_location";
+
+const IP_DEFAULT = "79.116.62.157";
 
 function App() {
+  const intlEs = new Intl.DisplayNames(["es-ES"], { type: "region" });
 
-  const [mensajeEspera, setMensajeEspera] = useState(null)
+  const [ipData, setIpData] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
-  const [IPData, setIPData] = useState(null);
+
+  const fetchIpData = useCallback(async () => {
+    const data = await IPLocationAPI.getCurrentLocation(IP_DEFAULT);
+    const json = await data.json();
+    setIpData(json);
+  }, []);
+
+  const fetchWeatherData = useCallback(async () => {
+    if (!ipData) {
+      return false;
+    }
+
+    const [lon, lan] = ipData.loc.split(",");
+    const data = await WeatherAPI.getCurrentWeather(lon, lan);
+    const json = await data.json();
+    setTimeout(() => setWeatherData(json), 2000);
+  }, [ipData]);
 
   useEffect(() => {
-    setMensajeEspera("Cargando datos...")
+    fetchIpData();
+  }, [fetchIpData]);
 
-      fetch("https://ipinfo.io/79.116.62.157?token=567ac2ea1e6487")
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('La solicitud a la API IP falló');
-          }
-          return response.json();
-        })
-        .then(localData => {
-          setIPData(localData);
-          console.log(localData)
-           // Realiza la solicitud a la API del tiempo
-           const [lat, lon] = localData.loc.split(',');
+  useEffect(() => {
+    fetchWeatherData();
+  }, [fetchWeatherData]);
 
-           console.log(lat);
-           console.log(lon);
-          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`)
-            .then(response => {
-            if (!response.ok) {
-              throw new Error('La solicitud a la API falló');
-            }
-            return response.json(); 
-            })
-          .then(wData => {
-            setWeatherData(wData);
-            console.log(wData);
-          })
-          //Finaliza solicitud a API del tiempo
-          .catch(error => {
-            console.error('Error al obtener datos del clima:', error);
-          });
-          })
-        .catch(error => {
-          console.error('Error al obtener datos del clima:', error);
-        });
+  console.log("ipData", ipData);
+  console.log("weatherData", weatherData);
 
-        console.log("uwu")
-     
-  }, []);
-  
   return (
-    <div className="card rounded-xl">
-      {weatherData ? (
-        <div>
-        <h1>{IPData.city}</h1>
-        <p className="left-0">Spain</p>
-        <div className="flex flex-row items-center">
-            <img src="media/Sol.png" alt="Hace Sol"></img>
-            <p className="ml-4 text-5xl" >  {weatherData.current.temperature_2m} {weatherData.current_units.temperature_2m}</p>
+    <div className="flex items-center justify-center w-screen h-screen overflow-x-hidden overflow-y-auto bg-white">
+      {!weatherData ? (
+        <svg
+          className="animate-spin h-12 w-12 text-blue-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+      ) : (
+        <div className="grid gap-12 min-w-[50%]">
+          <div className="flex flex-col gap-2 p-14">
+            <h1 className="text-[#181818] text-5xl font-bold">{ipData.city}</h1>
+            <p className="text-[#D1D1D1] font-semibold">
+              {intlEs.of(ipData.country)}
+            </p>
+          </div>
+          <div className="flex flex-col gap-8 min-w-[260px] p-12 rounded-2xl bg-[#F9F9F9]">
+            <div className="flex flex-row items-center">
+              <img src="media/Sol.png" alt="Hace Sol"></img>
+              <p className="ml-4 text-5xl font-bold text-[#4B4B4B]">
+                {weatherData.current.temperature_2m}{" "}
+                {weatherData.current_units.temperature_2m[0]}
+              </p>
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <div className="flex justify-between py-2 px-4 border-2 border-[#F1F1F1] rounded-xl">
+                <p className="text-[#4E2B00] text-sm font-bold">Humedad</p>
+                <p className="text-[#4E2B00] text-sm font-bold">
+                  {weatherData.current.relative_humidity_2m}
+                </p>
+              </div>
+              <div className="flex justify-between py-2 px-4">
+                <p className="text-[#4E2B00] text-sm font-bold">Viento</p>
+                <p className="text-[#4E2B00] text-sm font-bold">
+                  {weatherData.current.wind_speed_10m} km
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-2">
-          <div className="name">Humedad</div>
-          <div className="datos"> {weatherData.current.relative_humidity_2m} </div>
-        </div>
-        <div className="grid grid-cols-2">
-          <div className="name">Viento</div>
-          <div className="datos"> {weatherData.current.wind_speed_10m} km</div>
-        </div>
-        </div>
-      ) : (<p>{mensajeEspera}</p>
       )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

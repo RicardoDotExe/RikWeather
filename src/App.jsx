@@ -56,7 +56,7 @@ function App() {
         <h1>{IPData.city}</h1>
         <p className="left-0">Spain</p>
         <div className="flex flex-row items-center">
-            <img src="media/Sol.png" alt="Hace Sol"></img>
+            <img src="src/assets/Sol.png" alt="Hace Sol"></img>
             <p className="ml-4 text-5xl" >  {weatherData.current.temperature_2m} {weatherData.current_units.temperature_2m}</p>
         </div>
         <div className="grid grid-cols-2">

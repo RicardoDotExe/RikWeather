@@ -1,9 +1,11 @@
-function IpAPI() {
+export default class IpAPI {
 
-    const URL_MAIN = 'https://ipinfo.io/79.116.62.157?token='
-    const TOKEN = '567ac2ea1e6487'
+    static URL_MAIN = 'https://ipinfo.io/'
+    static TOKEN = '567ac2ea1e6487'
 
-    
+    static async getLocationInfo(ip = '79.116.62.157' ) {
+        console.log('prelink')
+        const URL_FINAL = `${this.URL_MAIN}${ip}?token=${this.TOKEN}`
+        return await fetch(URL_FINAL);
+    }
 }
-
-export default IpAPI;

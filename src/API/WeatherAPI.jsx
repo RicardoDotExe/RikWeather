@@ -1,7 +1,9 @@
 export default class WheatherAPI {
 
   static async getWeatherInfo(lat, lon) {
-    return await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`)
+    const URL_MAIN = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+
+    return await fetch(`${URL_MAIN}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`)
   }
 
   static getImgYDescTiempo(weather_code, temperature, units) {

@@ -17,7 +17,6 @@ function App() {
     const callIpData = await IpAPI.getLocationInfo()
     const dataIP = await callIpData.json()
     setIPData(dataIP)
-    console.log(dataIP)
   }, []);
 
   const fetchWeatherData = useCallback(async () => {
@@ -31,7 +30,6 @@ function App() {
     const dataWeather = await callWeatherAPI.json()
     setWeatherData(dataWeather)
     console.log(dataWeather)
-    WeatherAPI.getImgYDescTiempo(dataWeather.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)
   }, [IPData])
 
   useEffect(() => {
@@ -49,11 +47,11 @@ function App() {
         <h1>{IPData.city}</h1>
         <p className="left-0">{IPData.country}</p>
         {WeatherAPI.getImgYDescTiempo(weatherData.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)}
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 hover:border-x-2 hover:bg-slate-200 rounded-2xl hover:pl-1 hover:pr-1">
           <div className="name">Humedad</div>
           <div className="datos"> {weatherData.current.relative_humidity_2m} </div>
         </div>
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 hover:border-x-2 hover:bg-slate-200 rounded-2xl hover:pl-1 hover:pr-1">
           <div className="name">Viento</div>
           <div className="datos"> {weatherData.current.wind_speed_10m} km</div>
         </div>

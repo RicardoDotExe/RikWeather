@@ -1,3 +1,19 @@
+import sunnyImg from '../assets/sunny.png'
+import slightlyCloudyImg from '../assets/sightlyCloudy.png'
+import cloudyImg from '../assets/cloud.png'
+import fogImg from '../assets/fog.png'
+import freezingDrizzleImg from '../assets/snowgrain.png'
+import drizzleImg from '../assets/rain.png'
+import rainImg from '../assets/heavyrain.png'
+import freezingRainImg from '../assets/snow.png'
+import snowFallImg from '../assets/snow.png'
+import snowGrainsImg from '../assets/snowgrain.png'
+import rainShowersImg from '../assets/heavyRain.png'
+import snowShowersImg from '../assets/snow.png'
+import thunderstormImg from '../assets/thunderstorm.png'
+import thunderstormHailImg from '../assets/thunderstormHail.png'
+import 'animate.css';
+
 export default class WheatherAPI {
 
   static async getWeatherInfo(lat, lon) {
@@ -7,44 +23,92 @@ export default class WheatherAPI {
   }
 
   static getImgYDescTiempo(weather_code, temperature, units) {
-    var preUrlMedia = 'src/assets/';
-    var imgCode;
-    var textWeather;
+      const weatherImagesDescrip = [
+        {
+          img: sunnyImg, 
+          text: 'Soleado',
+          codes: 0
+        },
+        {
+          img: slightlyCloudyImg,
+          text: 'Nubes dispersas',
+          codes: [1, 2, 3]
+        },
+        {
+          img: cloudyImg,
+          text: 'Nublado',
+          codes: 3
+        },
+        {
+          img: fogImg,
+          text: 'Niebla',
+          codes: [45, 48]
+        },
+        {
+          img: freezingDrizzleImg,
+          text: 'Llovizna helada',
+          codes: [56, 57]
+        },
+        {
+          img: drizzleImg,
+          text: 'Llovizna',
+          codes: [51, 53, 55]	
+        },
+        {
+          img: rainImg,
+          text: 'Lluvia',
+          codes: [61, 63, 65]
+        },
+        {
+          img: freezingRainImg,
+          text: 'Lluvia helada',
+          codes: [66, 67]
+        },
+        {
+          img: snowFallImg,
+          text: 'Nieve',
+          codes: [71, 73, 75]
+        },
+        {
+          img: snowGrainsImg,
+          text: 'Nieve ligera',
+          codes: 77
+        },
+        {
+          img: rainShowersImg,
+          text: 'Lluvias',
+          codes: [80, 81, 82]
+        },
+        {
+          img: snowShowersImg,
+          text: 'Nieve intensa',
+          codes: [85, 86]
+        },
+        {
+          img: thunderstormImg,
+          text: 'Tormenta',
+          codes: 95
+        },
+        {
+          img: thunderstormHailImg,
+          text: 'Tormenta con granizo',
+          codes: [96, 99]
+        }
+      ]
 
-    if (weather_code == 0) {
-      imgCode = '0.png'
-      textWeather = 'Soleado'
-    } else if (weather_code > 0 && weather_code < 3) {
-      imgCode = '1.png'
-      textWeather = 'ligeramente nublado'
-    } else if (weather_code == 3) {
-      imgCode = '3.png'
-      textWeather = 'Nublado'
-    } else if (weather_code > 3 && weather_code < 51) {
-      imgCode = '45.png'
-      textWeather = 'Niebla'
-    } else if (weather_code > 50 && weather_code < 61) {
-      imgCode = '51.png'
-      textWeather = 'Llovizna'
-    } else if ( weather_code > 60 && weather_code < 71) {
-      imgCode = '61.png'
-      textWeather = 'Lluvia'
-    } else if (weather_code > 70 && weather_code < 95){
-      imgCode = '71.png'
-      textWeather = 'Nevada'
-    } else if (weather_code > 94) {
-      imgCode = '95.png'
-      textWeather = 'Tormenta'
-    }
+    const currentWeather = weatherImagesDescrip.find(current => {
+      return Array.isArray(current.codes) ? current.codes.includes(weather_code) : current.codes == weather_code
+    })
 
     return (
       <div className="flex flex-row items-center">
-        <img src={preUrlMedia+imgCode} alt={textWeather}></img>
+        <img src={currentWeather.img} className="animate__animated animate__bounceIn w-16 h-16"></img>
         <div>
-          <p className='ml-5 text-2xl'>{textWeather}</p>
+          <p className='ml-5 text-2xl'>{currentWeather.text}</p>
           <p className="ml-4 text-5xl" > {temperature} {units}</p>
         </div>
       </div>
       )
   }
 }
+  

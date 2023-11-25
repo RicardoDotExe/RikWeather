@@ -8,14 +8,16 @@ function App() {
   const [mensajeEspera, setMensajeEspera] = useState(null)
   const [IPData, setIPData] = useState(null)
   const [weatherData, setWeatherData] = useState(null);
+  const [paramsWeather, setParamsWeather] = useState(null)
+  
 
   useEffect(() => {
     setMensajeEspera('Cargando datos. Esperate un ratito.👿')
   }, []);
 
   const fetchIpData = useCallback(async () => {
-    const callIpData = await IpAPI.getLocationInfo()
-    const dataIP = await callIpData.json()
+    const response = await IpAPI.getLocationInfo()
+    const dataIP = await response.json()
     setIPData(dataIP)
   }, []);
 
@@ -26,10 +28,11 @@ function App() {
 
     const [lat, lon] = IPData.loc.split(",");
     console.log([lat, lon])
-    const callWeatherAPI = await WeatherAPI.getWeatherInfo(lat, lon)
-    const dataWeather = await callWeatherAPI.json()
+    const response = await WeatherAPI.getWeatherInfo(lat, lon)
+    const dataWeather = await response.json()
     setWeatherData(dataWeather)
     console.log(dataWeather)
+    setParamsWeather(WeatherAPI.setParamsWeather(dataWeather))
   }, [IPData])
 
   useEffect(() => {
@@ -41,20 +44,14 @@ function App() {
   }, [fetchWeatherData])
 
   return (
-    <div className="card rounded-xl">
+    <div className="card mx-auto rounded-xl">
       {weatherData ? (
         <div>
-        <h1>{IPData.city}</h1>
-        <p className="left-0">{IPData.country}</p>
-        {WeatherAPI.getImgYDescTiempo(weatherData.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)}
-        <div className="grid grid-cols-2 hover:border-x-2 hover:bg-slate-200 rounded-2xl hover:pl-1 hover:pr-1">
-          <div className="name">Humedad</div>
-          <div className="datos"> {weatherData.current.relative_humidity_2m} </div>
-        </div>
-        <div className="grid grid-cols-2 hover:border-x-2 hover:bg-slate-200 rounded-2xl hover:pl-1 hover:pr-1">
-          <div className="name">Viento</div>
-          <div className="datos"> {weatherData.current.wind_speed_10m} km</div>
-        </div>
+          <div className="flex items-end">
+          <h1>{IPData.city}</h1><p>{IPData.country}</p>
+          </div>
+          {WeatherAPI.showImgYDescTiempo(weatherData.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)}
+          {WeatherAPI.showParamsWeather(paramsWeather)}
         </div>
       ) : (<p>{mensajeEspera}</p>
       )}

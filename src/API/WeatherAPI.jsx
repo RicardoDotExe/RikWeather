@@ -13,6 +13,7 @@ import snowShowersImg from '../assets/snow.png'
 import thunderstormImg from '../assets/thunderstorm.png'
 import thunderstormHailImg from '../assets/thunderstormHail.png'
 import 'animate.css';
+import '../App.css';
 
 export default class WheatherAPI {
 
@@ -22,7 +23,21 @@ export default class WheatherAPI {
     return await fetch(`${URL_MAIN}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`)
   }
 
-  static getImgYDescTiempo(weather_code, temperature, units) {
+  static setParamsWeather(weatherData) {
+    const paramsWeather = [{ 
+      name: 'Humedad',
+      result: weatherData.current.relative_humidity_2m
+      },
+      {
+        name: 'Viento',
+        result: `${weatherData.current.wind_speed_10m} km`
+      }
+    ]
+
+    return paramsWeather
+  }
+
+  static showImgYDescTiempo(weather_code, temperature, units) {
       const weatherImagesDescrip = [
         {
           img: sunnyImg, 
@@ -110,5 +125,15 @@ export default class WheatherAPI {
       </div>
       )
   }
+
+  static showParamsWeather(paramsWeather) {
+    return(paramsWeather.map((element, i) => (
+      <div key={i} className="grid grid-cols-2 hover:border-x-2 hover:bg-slate-200 rounded-2xl hover:pl-1 hover:pr-1">
+        <div className="name">{element.name}</div>
+        <div className="datos">{element.result}</div>
+      </div>
+    )))
+  }
+
 }
   

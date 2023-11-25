@@ -9,7 +9,7 @@ function App() {
   const [IPData, setIPData] = useState(null)
   const [weatherData, setWeatherData] = useState(null);
   const [paramsWeather, setParamsWeather] = useState(null)
-  
+  const intlEs = new Intl.DisplayNames(["es-ES"], { type: "region" });
 
   useEffect(() => {
     setMensajeEspera('Cargando datos. Esperate un ratito.👿')
@@ -48,7 +48,7 @@ function App() {
       {weatherData ? (
         <div>
           <div className="flex items-end">
-          <h1>{IPData.city}</h1><p>{IPData.country}</p>
+          <h1>{IPData.city}</h1> <p className="text-slate-600">{intlEs.of(IPData.country)}</p>
           </div>
           {WeatherAPI.showImgYDescTiempo(weatherData.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)}
           {WeatherAPI.showParamsWeather(paramsWeather)}

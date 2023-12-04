@@ -9,6 +9,7 @@ function App() {
   const [IPData, setIPData] = useState(null)
   const [weatherData, setWeatherData] = useState(null);
   const [paramsWeather, setParamsWeather] = useState(null)
+  const [srcWeatherData, setSrcWeatherData] = useState(null)
   const intlEs = new Intl.DisplayNames(["es-ES"], { type: "region" });
 
   useEffect(() => {
@@ -27,12 +28,13 @@ function App() {
     }
 
     const [lat, lon] = IPData.loc.split(",");
-    console.log([lat, lon])
     const response = await WeatherAPI.getWeatherInfo(lat, lon)
     const dataWeather = await response.json()
     setWeatherData(dataWeather)
-    console.log(dataWeather)
     setParamsWeather(WeatherAPI.setParamsWeather(dataWeather))
+    const currentWeatherSrc = (await WeatherAPI.getWeatherSrc(dataWeather.current.weather_code))
+    setSrcWeatherData(currentWeatherSrc)
+    console.log(dataWeather)
   }, [IPData])
 
   useEffect(() => {
@@ -44,19 +46,17 @@ function App() {
   }, [fetchWeatherData])
 
   return (
-    <div className="card mx-auto rounded-xl">
-      {weatherData ? (
-        <div>
-          <div className="flex items-end">
-          <h1>{IPData.city}</h1> <p className="text-slate-600">{intlEs.of(IPData.country)}</p>
+      (weatherData && srcWeatherData) ? (
+        <div className="bg-cover bg-center max-w-sm mx-auto rounded-xl p-4" style={{ backgroundImage: `url(${srcWeatherData.bg})` }}>
+          <div className="flex items-center justify-center mb-3">
+            <p className=" text-6xl">{IPData.city}</p> 
+            <p className=" text-slate-800 text-4xl">{intlEs.of(IPData.country)}</p>
           </div>
-          {WeatherAPI.showImgYDescTiempo(weatherData.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)}
+          <WeatherAPI srcWeatherData={srcWeatherData}  currentTemperature={weatherData.current.temperature_2m} currentUnits={weatherData.current_units.temperature_2m} />
           {WeatherAPI.showParamsWeather(paramsWeather)}
         </div>
-      ) : (<p>{mensajeEspera}</p>
-      )}
-    </div>
-  )
+    ) : (<div className="bg-white"><p>{mensajeEspera}</p></div>
+  ))
 }
 
 export default App

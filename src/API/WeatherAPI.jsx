@@ -141,7 +141,7 @@ import '../App.css';
     return(
       <div className=" bg-cyan-800 bg-opacity-40 rounded-xl p-1">
       {paramsWeather.map((element, index) => (
-      <div key={element.name} className={`grid grid-cols-2 ml-7 mr-7 ${index !== paramsWeather.length - 1 ? ' border-b-2 border-white' : ''}`}>
+      <div key={element.name} className={`grid grid-cols-2 ml-7 mr-7 ${index !== paramsWeather.length - 1 ? ' border-b-2 border-cyan-700' : ''}`}>
         <div className="name">{element.name}</div>
         <div className="datos">{element.result}</div>
       </div>

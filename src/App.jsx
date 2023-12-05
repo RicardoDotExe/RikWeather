@@ -48,9 +48,9 @@ function App() {
   return (
       (weatherData && srcWeatherData) ? (
         <div className="bg-cover bg-center max-w-sm mx-auto rounded-xl p-4" style={{ backgroundImage: `url(${srcWeatherData.bg})` }}>
-          <div className="flex items-center justify-center mb-3">
-            <p className=" text-6xl">{IPData.city}</p> 
-            <p className=" text-slate-800 text-4xl">{intlEs.of(IPData.country)}</p>
+         <div className="text-center p-2">
+            <p className=" text-6xl p-0">{IPData.city}</p> 
+            <p className=" text-slate-800 text-xl">{intlEs.of(IPData.country)}</p>
           </div>
           <WeatherAPI srcWeatherData={srcWeatherData}  currentTemperature={weatherData.current.temperature_2m} currentUnits={weatherData.current_units.temperature_2m} />
           {WeatherAPI.showParamsWeather(paramsWeather)}

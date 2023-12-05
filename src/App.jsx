@@ -8,16 +8,18 @@ function App() {
   const [mensajeEspera, setMensajeEspera] = useState(null)
   const [IPData, setIPData] = useState(null)
   const [weatherData, setWeatherData] = useState(null);
+  const [paramsWeather, setParamsWeather] = useState(null)
+  const [srcWeatherData, setSrcWeatherData] = useState(null)
+  const intlEs = new Intl.DisplayNames(["es-ES"], { type: "region" });
 
   useEffect(() => {
     setMensajeEspera('Cargando datos. Esperate un ratito.👿')
   }, []);
 
   const fetchIpData = useCallback(async () => {
-    const callIpData = await IpAPI.getLocationInfo()
-    const dataIP = await callIpData.json()
+    const response = await IpAPI.getLocationInfo()
+    const dataIP = await response.json()
     setIPData(dataIP)
-    console.log(dataIP)
   }, []);
 
   const fetchWeatherData = useCallback(async () => {
@@ -26,12 +28,13 @@ function App() {
     }
 
     const [lat, lon] = IPData.loc.split(",");
-    console.log([lat, lon])
-    const callWeatherAPI = await WeatherAPI.getWeatherInfo(lat, lon)
-    const dataWeather = await callWeatherAPI.json()
+    const response = await WeatherAPI.getWeatherInfo(lat, lon)
+    const dataWeather = await response.json()
     setWeatherData(dataWeather)
+    setParamsWeather(WeatherAPI.setParamsWeather(dataWeather))
+    const currentWeatherSrc = (await WeatherAPI.getWeatherSrc(dataWeather.current.weather_code))
+    setSrcWeatherData(currentWeatherSrc)
     console.log(dataWeather)
-    WeatherAPI.getImgYDescTiempo(dataWeather.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)
   }, [IPData])
 
   useEffect(() => {
@@ -43,25 +46,17 @@ function App() {
   }, [fetchWeatherData])
 
   return (
-    <div className="card rounded-xl">
-      {weatherData ? (
-        <div>
-        <h1>{IPData.city}</h1>
-        <p className="left-0">{IPData.country}</p>
-        {WeatherAPI.getImgYDescTiempo(weatherData.current.weather_code, weatherData.current.temperature_2m, weatherData.current_units.temperature_2m)}
-        <div className="grid grid-cols-2">
-          <div className="name">Humedad</div>
-          <div className="datos"> {weatherData.current.relative_humidity_2m} </div>
+      (weatherData && srcWeatherData) ? (
+        <div className="bg-cover bg-center max-w-sm mx-auto rounded-xl p-4" style={{ backgroundImage: `url(${srcWeatherData.bg})` }}>
+         <div className="text-center p-2">
+            <p className=" text-6xl p-0">{IPData.city}</p> 
+            <p className=" text-slate-800 text-xl">{intlEs.of(IPData.country)}</p>
+          </div>
+          <WeatherAPI srcWeatherData={srcWeatherData}  currentTemperature={weatherData.current.temperature_2m} currentUnits={weatherData.current_units.temperature_2m} />
+          {WeatherAPI.showParamsWeather(paramsWeather)}
         </div>
-        <div className="grid grid-cols-2">
-          <div className="name">Viento</div>
-          <div className="datos"> {weatherData.current.wind_speed_10m} km</div>
-        </div>
-        </div>
-      ) : (<p>{mensajeEspera}</p>
-      )}
-    </div>
-  )
+    ) : (<div className="bg-white"><p>{mensajeEspera}</p></div>
+  ))
 }
 
 export default App

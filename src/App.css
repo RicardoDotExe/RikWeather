@@ -11,3 +11,12 @@
   text-align: right;
   align-self: flex-end; /* Alinea los elementos .datos a la derecha */
 }
+
+.dataContainer {
+  transition: padding 1s, background-color 1s;
+}
+
+.dataContainer:hover {
+  padding:0.5rem;
+  background-color: rgb(15 94 117);
+}
